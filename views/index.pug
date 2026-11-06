@@ -1,0 +1,47 @@
+extends layout
+
+block content
+  h1 Book an appointment
+  p.lede Pick a free slot, add your details, and you'll get a confirmation straight away.
+
+  if error
+    .alert.alert-error(role="alert")= error
+
+  if providers.length > 1
+    form.filter(action="/" method="get")
+      label(for="provider") Doctor
+      select#provider(name="provider" onchange="this.form.submit()")
+        option(value="" selected=!provider) All doctors
+        each p in providers
+          option(value=p selected=(p === provider))= p
+      noscript
+        button(type="submit") Filter
+
+  if slots.length === 0
+    .empty
+      p No appointment slots are available right now. Please check back later.
+  else
+    form.booking(action="/book" method="post")
+      input(type="hidden" name="idempotency_key" value=idempotencyKey)
+      fieldset
+        legend Available slots
+        ul.slots
+          each slot in slots
+            - const open = slot.available && !slot.started
+            li.slot(class=open ? '' : 'slot-taken')
+              label
+                input(type="radio" name="slot_id" value=slot.id disabled=!open checked=(form.slot_id === slot.id) required)
+                span.slot-main
+                  span.slot-provider= slot.provider
+                  span.slot-when #{slot.date} · #{slot.time}
+                span.slot-badge= open ? 'Available' : (slot.started ? 'Started' : 'Booked')
+
+      fieldset.details
+        legend Your details
+        .field
+          label(for="name") Full name
+          input#name(type="text" name="name" value=form.name || '' required maxlength="200" autocomplete="name")
+        .field
+          label(for="email") Email
+          input#email(type="email" name="email" value=form.email || '' required maxlength="254" autocomplete="email")
+        button.primary(type="submit") Book appointment

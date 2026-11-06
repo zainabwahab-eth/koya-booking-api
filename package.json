@@ -1,0 +1,27 @@
+{
+  "name": "koya-booking-api",
+  "version": "1.0.0",
+  "description": "Clinic appointment booking API (Express + MongoDB) with a server-rendered Pug booking page.",
+  "type": "module",
+  "main": "server.js",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --watch --env-file-if-exists=.env server.js",
+    "test": "node --test --test-global-setup=test/global-setup.js --test-reporter=spec \"test/**/*.test.js\"",
+    "seed": "node --env-file-if-exists=.env scripts/seed.js",
+    "check": "node --env-file-if-exists=.env scripts/contract-check.js"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "mongodb": "^6.22.0",
+    "pug": "^3.0.4"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^11.3.0",
+    "supertest": "^7.3.1"
+  }
+}

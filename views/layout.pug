@@ -1,0 +1,19 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title= title ? `${title} · Koya Clinic` : 'Koya Clinic · Book an appointment'
+    link(rel="stylesheet" href="/public/styles.css")
+  body
+    header.site
+      .wrap
+        a.brand(href="/") Koya Clinic
+        form.lookup(action="/lookup" method="get")
+          label.sr-only(for="lookup-id") Booking id
+          input#lookup-id(type="text" name="id" placeholder="Find a booking by id" autocomplete="off")
+          button(type="submit") Find
+    main.wrap
+      block content
+    footer.site
+      .wrap All times are shown in UTC.

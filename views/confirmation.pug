@@ -1,0 +1,40 @@
+extends layout
+
+block content
+  if notice
+    .alert.alert-info(role="status")= notice
+
+  if booking.status === 'confirmed'
+    h1 You're booked in
+    p.lede A confirmation for #{booking.name} has been recorded. Keep your booking id to look it up later.
+  else
+    h1 Booking cancelled
+    p.lede This booking is cancelled and the slot is free for someone else.
+
+  dl.receipt
+    dt Booking id
+    dd
+      code= booking.id
+    dt Status
+    dd
+      span.status(class=`status-${booking.status}`)= booking.status
+    if slot
+      dt Doctor
+      dd= slot.provider
+      dt When
+      dd #{slot.date} · #{slot.time}
+    else
+      dt Slot
+      dd= booking.slot_id
+    dt Name
+    dd= booking.name
+    dt Email
+    dd= booking.email
+    dt Booked at
+    dd= booking.created_at
+
+  .actions
+    a.button(href="/") Back to slots
+    if booking.status === 'confirmed'
+      form(action=`/confirmation/${encodeURIComponent(booking.id)}/cancel` method="post" onsubmit="return confirm('Cancel this booking?')")
+        button.danger(type="submit") Cancel booking

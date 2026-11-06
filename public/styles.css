@@ -1,0 +1,92 @@
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #1c2430;
+  --muted: #5d6b7c;
+  --line: #dde2e8;
+  --accent: #0f6e66;
+  --accent-ink: #ffffff;
+  --danger: #b42318;
+  --ok-bg: #e6f4ef;
+  --ok-ink: #0f6e46;
+  --off-bg: #f1f2f4;
+  --err-bg: #fdecea;
+  --info-bg: #e8f1fb;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161c;
+    --card: #1a2029;
+    --text: #e6eaef;
+    --muted: #9aa6b4;
+    --line: #2c3540;
+    --accent: #3fb8a9;
+    --accent-ink: #0b1215;
+    --danger: #ff8a7f;
+    --ok-bg: #133229;
+    --ok-ink: #7fdcb5;
+    --off-bg: #222a33;
+    --err-bg: #3a1d1b;
+    --info-bg: #182a3d;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+header.site { background: var(--card); border-bottom: 1px solid var(--line); }
+header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; padding-bottom: 12px; flex-wrap: wrap; }
+.brand { font-weight: 700; color: var(--accent); text-decoration: none; font-size: 1.1rem; }
+.lookup { display: flex; gap: 6px; }
+.lookup input { width: 210px; max-width: 50vw; }
+main.wrap { padding-top: 28px; padding-bottom: 40px; }
+footer.site { color: var(--muted); font-size: 0.85rem; padding: 0 0 32px; }
+h1 { margin: 0 0 6px; font-size: 1.7rem; }
+.lede { color: var(--muted); margin: 0 0 22px; }
+input, select, button { font: inherit; }
+input[type="text"], input[type="email"], select {
+  padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text);
+}
+button, .button {
+  display: inline-block; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--card); color: var(--text); cursor: pointer; text-decoration: none;
+}
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; width: 100%; padding: 12px; }
+button.danger { color: var(--danger); border-color: var(--danger); background: transparent; }
+fieldset { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); padding: 16px; margin: 0 0 18px; }
+legend { font-weight: 600; padding: 0 6px; }
+.filter { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.slots { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.slot label {
+  display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--line);
+  border-radius: 8px; cursor: pointer;
+}
+.slot label:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.slot-taken label { cursor: not-allowed; opacity: 0.6; }
+.slot-main { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.slot-provider { font-weight: 600; }
+.slot-when { color: var(--muted); font-size: 0.92rem; }
+.slot-badge { font-size: 0.8rem; padding: 2px 8px; border-radius: 999px; background: var(--ok-bg); color: var(--ok-ink); white-space: nowrap; }
+.slot-taken .slot-badge { background: var(--off-bg); color: var(--muted); }
+.details .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.alert { padding: 12px 14px; border-radius: 8px; margin-bottom: 18px; }
+.alert-error { background: var(--err-bg); color: var(--danger); }
+.alert-info { background: var(--info-bg); }
+.empty { background: var(--card); border: 1px dashed var(--line); border-radius: var(--radius); padding: 24px; color: var(--muted); }
+.receipt { display: grid; grid-template-columns: max-content 1fr; gap: 10px 20px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; margin: 0 0 20px; }
+.receipt dt { color: var(--muted); }
+.receipt dd { margin: 0; overflow-wrap: anywhere; }
+.status { padding: 2px 10px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+.status-confirmed { background: var(--ok-bg); color: var(--ok-ink); }
+.status-cancelled { background: var(--off-bg); color: var(--muted); }
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (max-width: 480px) {
+  .receipt { grid-template-columns: 1fr; gap: 2px; }
+  .receipt dd { margin-bottom: 10px; }
+}
