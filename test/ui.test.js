@@ -165,7 +165,8 @@ describe('Web page, step 3: book and confirm', () => {
     assert.match(res.text, /Not found/);
   });
 
-  it('/healthz is public', async () => {
+  it('/health and /healthz are public', async () => {
+    assert.equal((await ctx.http().get('/health')).status, 200);
     assert.equal((await ctx.http().get('/healthz')).status, 200);
   });
 });

@@ -4,6 +4,8 @@ Patients can list appointment slots, book one, look it up and cancel it. The rep
 
 **Stack:** Node 24, Express 5, MongoDB (Atlas), Pug. Tests use the built-in `node:test` runner with Supertest and an in-memory MongoDB.
 
+**Live:** https://koya-booking-api-254525890059.europe-west1.run.app (Google Cloud Run, europe-west1). The API endpoints are at the root, and opening the URL in a browser shows the booking page.
+
 ## What each level does and where
 
 | Level | Behaviour | How it is enforced | Code |
@@ -32,7 +34,7 @@ Booking takes three steps:
 
 The page is rendered on the server and calls the same booking service as the API. It gets the same validation, double-booking guard, idempotency (a hidden key per form, so a double-click books once) and rate limit. The API key never reaches the browser.
 
-Page routes and `/healthz` are public. Everything else requires `X-API-Key`. An unknown path returns 401 without a key and 404 with one.
+Page routes and `/health` are public. `/healthz` also works locally, but Cloud Run's front end answers paths ending in `z` itself, so use `/health` on the live URL. Everything else requires `X-API-Key`. An unknown path returns 401 without a key and 404 with one.
 
 ## Run locally
 

@@ -31,7 +31,8 @@ export function createApp({ db, apiKey, rateLimitConfig = DEFAULT_RATE_LIMIT }) 
   // file always gets a new URL and browsers can never show new pages with old styles.
   app.locals.cssUrl = `/public/styles.css?v=${assetHash(path.join(here, 'public', 'styles.css'))}`;
 
-  app.get('/healthz', (req, res) => res.json({ ok: true }));
+  // Cloud Run reserves paths ending in "z" (its front end answers /healthz itself), so /health is the public one.
+  app.get(['/health', '/healthz'], (req, res) => res.json({ ok: true }));
   app.use('/public', express.static(path.join(here, 'public'), { maxAge: '1y', immutable: true }));
   app.use(uiRouter({ db, rateLimitConfig }));
 
