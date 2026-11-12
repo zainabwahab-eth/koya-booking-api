@@ -1,4 +1,24 @@
+import dns from 'node:dns';
 import { MongoClient } from 'mongodb';
+
+/**
+ * "8.8.8.8, 1.1.1.1" -> ['8.8.8.8', '1.1.1.1']. Empty or unset -> [].
+ * Used to override Node's DNS resolvers when the system one can't answer SRV lookups
+ * (needed for mongodb+srv:// URLs; some Windows setups point Node at a local 127.0.0.1 resolver).
+ */
+export function parseDnsServers(value) {
+  if (!value) return [];
+  return value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+export function applyDnsServers(value = process.env.DNS_SERVERS) {
+  const servers = parseDnsServers(value);
+  if (servers.length > 0) dns.setServers(servers);
+  return servers;
+}
 
 export const COLLECTIONS = {
   slots: 'slots',
@@ -9,6 +29,7 @@ export const COLLECTIONS = {
 
 export async function connect(uri, dbName) {
   if (!uri) throw new Error('DATABASE_URL is not set');
+  applyDnsServers();
   const client = new MongoClient(uri, { serverSelectionTimeoutMS: 10_000 });
   await client.connect();
   const db = client.db(dbName);

@@ -42,7 +42,7 @@ npm start                 # http://localhost:3000
 
 Atlas only accepts connections from IPs on its **Network Access** list. Add yours, or `0.0.0.0/0`, which Cloud Run needs anyway. If Atlas rejects you, the error is `tlsv1 alert internal error`.
 
-> **Windows note:** if startup fails with `querySrv ECONNREFUSED`, Node is using a local DNS resolver that does not answer SRV lookups. Use the standard (non-`+srv`) connection string from Atlas, or change your network DNS to a public resolver. Linux hosts such as Cloud Run don't have this problem.
+> **Windows note:** if startup fails with `querySrv ECONNREFUSED`, Node is using a local DNS resolver that does not answer the SRV lookup `mongodb+srv://` needs. Add `DNS_SERVERS=8.8.8.8,1.1.1.1` to `.env`. Leave it unset on Cloud Run, where the default resolver works.
 
 ## Tests
 
@@ -50,7 +50,7 @@ Atlas only accepts connections from IPs on its **Network Access** list. Add your
 npm test
 ```
 
-86 gate tests run in about 7 seconds against an in-memory MongoDB. Each test file gets its own database. They cover every level, including:
+89 gate tests run in about 7 seconds against an in-memory MongoDB. Each test file gets its own database. They cover every level, including:
 
 - 50 simultaneous bookings for one slot: exactly one 201 and 49 409s
 - 20 simultaneous retries with one `Idempotency-Key`: one booking, the same id every time
