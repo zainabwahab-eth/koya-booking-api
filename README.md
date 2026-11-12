@@ -22,10 +22,13 @@ Every error response has the shape `{"error": "<message>"}`.
 
 ## Web page
 
-- `GET /` lists the slots (with a doctor filter) and has the booking form
-- `POST /book` submits the form and redirects to the confirmation page
-- `GET /confirmation/:id` shows the confirmation and a cancel button
-- `GET /lookup?id=` finds a booking by id
+Booking takes three steps:
+
+1. `GET /` lists the doctors, each with its number of open times and next opening. A fully booked doctor is shown but can't be clicked.
+2. `GET /doctors/:provider` shows that doctor's open times, grouped by day, with the name and email form. `POST /book` submits it. On an error, the same page comes back with a plain-language message and the form values kept.
+3. `GET /confirmation/:id` shows the confirmation, a cancel button, and a link to book another time with the same doctor.
+
+`GET /lookup?id=` (the box in the header) finds a booking by id.
 
 The page is rendered on the server and calls the same booking service as the API. It gets the same validation, double-booking guard, idempotency (a hidden key per form, so a double-click books once) and rate limit. The API key never reaches the browser.
 
@@ -50,7 +53,7 @@ Atlas only accepts connections from IPs on its **Network Access** list. Add your
 npm test
 ```
 
-89 gate tests run in about 7 seconds against an in-memory MongoDB. Each test file gets its own database. They cover every level, including:
+98 gate tests run in about 7 seconds against an in-memory MongoDB. Each test file gets its own database. They cover every level, including:
 
 - 50 simultaneous bookings for one slot: exactly one 201 and 49 409s
 - 20 simultaneous retries with one `Idempotency-Key`: one booking, the same id every time

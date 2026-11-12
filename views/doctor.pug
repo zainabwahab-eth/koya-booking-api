@@ -1,0 +1,46 @@
+extends layout
+
+block content
+  include _steps
+  +steps(2)
+
+  a.back(href="/") ‹ All doctors
+
+  .doctor-head
+    span.avatar.avatar-lg(aria-hidden="true")= doctor.initials
+    div
+      h1= doctor.name
+      p.lede.tight #{doctor.open} open #{doctor.open === 1 ? 'time' : 'times'}. All times are UTC.
+
+  if error
+    .alert.alert-error(role="alert")= error
+
+  if days.length === 0
+    .empty
+      p #{doctor.name} is fully booked right now.
+      a.button(href="/") See other doctors
+  else
+    form.booking(action="/book" method="post")
+      input(type="hidden" name="idempotency_key" value=idempotencyKey)
+      input(type="hidden" name="provider" value=doctor.name)
+
+      fieldset
+        legend Pick a time
+        each day in days
+          .day
+            h2.day-title= day.date
+            .times
+              each slot in day.slots
+                label.chip
+                  input.sr-only(type="radio" name="slot_id" value=slot.id checked=(form.slot_id === slot.id) required)
+                  span= slot.startTime
+
+      fieldset.details
+        legend Your details
+        .field
+          label(for="name") Full name
+          input#name(type="text" name="name" value=form.name || '' required maxlength="200" autocomplete="name")
+        .field
+          label(for="email") Email
+          input#email(type="email" name="email" value=form.email || '' required maxlength="254" autocomplete="email")
+        button.primary(type="submit") Book appointment

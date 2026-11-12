@@ -1,6 +1,9 @@
 extends layout
 
 block content
+  include _steps
+  if booking.status === 'confirmed'
+    +steps(3)
   if notice
     .alert.alert-info(role="status")= notice
 
@@ -34,7 +37,9 @@ block content
     dd= booking.created_at
 
   .actions
-    a.button(href="/") Back to slots
+    if slot
+      a.button(href=slot.url) Book another time with #{slot.provider}
+    a.button(href="/") All doctors
     if booking.status === 'confirmed'
       form(action=`/confirmation/${encodeURIComponent(booking.id)}/cancel` method="post" onsubmit="return confirm('Cancel this booking?')")
         button.danger(type="submit") Cancel booking

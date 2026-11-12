@@ -1,0 +1,6 @@
+mixin steps(current)
+  ol.steps(aria-label="Booking steps")
+    each label, i in ['Doctor', 'Time & details', 'Confirmed']
+      li(class={ done: i + 1 < current, current: i + 1 === current } aria-current=(i + 1 === current ? 'step' : false))
+        span.step-num= i + 1
+        span.step-label= label
