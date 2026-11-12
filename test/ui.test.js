@@ -2,10 +2,33 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { setupTestApp, uniqueEmail, API_KEY } from './helpers.js';
 import { summarizeDoctors } from '../src/routes/ui.js';
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 const ctx = setupTestApp();
 const doctorPage = (name) => `/doctors/${encodeURIComponent(name)}`;
 const bookForm = (fields) => ctx.http().post('/book').type('form').send(fields);
+
+describe('Web page: stylesheet', () => {
+  it('pages link the CSS with a content hash, so browsers never pair new HTML with stale CSS', async () => {
+    const css = readFileSync(new URL('../public/styles.css', import.meta.url));
+    const hash = createHash('sha256').update(css).digest('hex').slice(0, 12);
+    for (const page of ['/', doctorPage('Dr Ade')]) {
+      const res = await ctx.http().get(page);
+      assert.match(res.text, new RegExp(`href="/public/styles\\.css\\?v=${hash}"`), page);
+    }
+    const asset = await ctx.http().get(`/public/styles.css?v=${hash}`);
+    assert.equal(asset.status, 200);
+    assert.match(asset.headers['cache-control'], /immutable/);
+  });
+
+  it('CSS styles the time buttons and doctor cards the templates use', () => {
+    const css = readFileSync(new URL('../public/styles.css', import.meta.url), 'utf8');
+    for (const selector of ['.chip input:checked + span', '.chip span', '.doctors', '.doctor-card', '.steps', '.sr-only']) {
+      assert.ok(css.includes(selector), `missing ${selector}`);
+    }
+  });
+});
 
 describe('Web page, step 1: choose a doctor', () => {
   it('GET / lists each doctor once with a link, without needing an API key, and never leaks the key', async () => {

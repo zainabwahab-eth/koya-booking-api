@@ -53,7 +53,7 @@ Atlas only accepts connections from IPs on its **Network Access** list. Add your
 npm test
 ```
 
-98 gate tests run in about 7 seconds against an in-memory MongoDB. Each test file gets its own database. They cover every level, including:
+100 gate tests run in about 7 seconds against an in-memory MongoDB. Each test file gets its own database. They cover every level, including:
 
 - 50 simultaneous bookings for one slot: exactly one 201 and 49 409s
 - 20 simultaneous retries with one `Idempotency-Key`: one booking, the same id every time

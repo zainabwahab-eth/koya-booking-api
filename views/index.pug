@@ -20,15 +20,17 @@ block content
           if d.open > 0
             a.doctor-card(href=d.url)
               span.avatar(aria-hidden="true")= d.initials
-              span.doctor-main
-                span.doctor-name= d.name
-                span.doctor-meta Next opening: #{d.next.date}, #{d.next.startTime}
-              span.doctor-count #{d.open} open
-              span.chevron(aria-hidden="true") ›
+              h2.doctor-name= d.name
+              p.doctor-meta Next opening
+              p.doctor-next #{d.next.date}, #{d.next.startTime}
+              span.doctor-foot
+                span.doctor-count #{d.open} open #{d.open === 1 ? 'time' : 'times'}
+                span.doctor-cta See times ›
           else
             .doctor-card.doctor-full
               span.avatar(aria-hidden="true")= d.initials
-              span.doctor-main
-                span.doctor-name= d.name
-                span.doctor-meta Fully booked
-              span.doctor-count 0 open
+              h2.doctor-name= d.name
+              p.doctor-meta Next opening
+              p.doctor-next None right now
+              span.doctor-foot
+                span.doctor-count Fully booked
