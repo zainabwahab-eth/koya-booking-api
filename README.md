@@ -71,42 +71,6 @@ npm run check -- https://YOUR-SERVICE-URL
 
 This runs 17 black-box checks against the real URL, level by level, the way an external grader would. **It calls `/reset`, which wipes all bookings.** Run `npm run seed` afterwards to restore the demo slots.
 
-## Deploy to Google Cloud Run
-
-From the repo root, with the `gcloud` CLI logged in and a project selected:
-
-```bash
-# 1. One-time: enable the services and store the secrets
-gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com
-printf '%s' 'mongodb+srv://USER:PASS@cluster0.xxxxx.mongodb.net/' | gcloud secrets create koya-database-url --data-file=-
-printf '%s' 'YOUR_API_KEY' | gcloud secrets create koya-api-key --data-file=-
-
-# Let Cloud Run read them (the default compute service account)
-PROJECT_NUMBER=$(gcloud projects describe $(gcloud config get-value project) --format='value(projectNumber)')
-for s in koya-database-url koya-api-key; do
-  gcloud secrets add-iam-policy-binding $s \
-    --member="serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com" \
-    --role=roles/secretmanager.secretAccessor
-done
-
-# 2. Build from the Dockerfile and deploy (pick the region closest to your Atlas cluster)
-gcloud run deploy koya-booking-api \
-  --source . \
-  --region europe-west1 \
-  --allow-unauthenticated \
-  --set-env-vars DB_NAME=koya_booking \
-  --set-secrets DATABASE_URL=koya-database-url:latest,API_KEY=koya-api-key:latest \
-  --min-instances 1
-
-# 3. Verify, then put demo slots back
-npm run check -- https://koya-booking-api-XXXXX.europe-west1.run.app
-npm run seed
-```
-
-- `--allow-unauthenticated` is required. The graders call the URL directly, and the API key is the auth layer.
-- `--min-instances 1` keeps one instance warm, so the first request isn't a cold start while they review. It costs a few dollars a month. Drop the flag to stay inside the free tier and accept a cold start of 1 to 3 seconds.
-- Cloud Run has no fixed outbound IP, so Atlas Network Access needs `0.0.0.0/0`.
-
 ## Project layout
 
 ```
